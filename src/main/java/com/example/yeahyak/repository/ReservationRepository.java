@@ -12,5 +12,5 @@ public interface ReservationRepository extends CrudRepository<Reservation,Long> 
     Optional<Reservation> findById(Long id);
     ArrayList<Reservation> findAll();
 
-    List<Reservation> findByNameAndPhonenumber(String name, String phonenumber);
+    List<Reservation> findByNameAndPhoneNumber(String name, String phoneNumber);
 }

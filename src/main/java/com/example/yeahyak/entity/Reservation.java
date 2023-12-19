@@ -10,12 +10,13 @@ import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
-@AllArgsConstructor
 @ToString
+@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 
+@Table(name = "reservation")
 public class Reservation extends BaseTimeEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // 자동생성 전략
@@ -28,14 +29,18 @@ public class Reservation extends BaseTimeEntity{
     private String room;
 
     @Column
-    private String phonenumber;
+    private String phoneNumber;
 
     @Column
-    private LocalDate startdate;
+    private LocalDate startDate;
 
     @Column
-    private LocalDate enddate;
+    private LocalDate endDate;
 
-    @Column
-    private Long status;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "status")
+    private Status status;
+
+
+
 }
