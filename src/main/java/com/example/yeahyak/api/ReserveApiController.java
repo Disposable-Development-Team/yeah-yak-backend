@@ -3,59 +3,79 @@ package com.example.yeahyak.api;
 
 import com.example.yeahyak.dto.ReservationForm;
 import com.example.yeahyak.dto.StatusForm;
+import com.example.yeahyak.dto.ServiceResponse;
 import com.example.yeahyak.entity.Reservation;
-import com.example.yeahyak.entity.Status;
 import com.example.yeahyak.repository.ReservationRepository;
 
 
+import com.example.yeahyak.service.ReservationService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 
 import java.util.List;
 
 @Slf4j
 @RestController
 @CrossOrigin(origins = "*")
+@Tag(name = "예약")
 public class ReserveApiController {
 
+
     @Autowired
-    private ReservationRepository reservationRepository;
+    private ReservationService reservationService;
+    private ServiceResponse success;
 
+    @Operation(summary = "예약 정보 전체 불러오기 api " )
     @GetMapping("/reservations")
-    public List<Reservation> getReservationAll(){
-        return reservationRepository.findAll();
+    public ResponseEntity<ServiceResponse> getReservationAll(){
+
+        List<Reservation> data =  reservationService.getReservationAll();
+        ServiceResponse set = new ServiceResponse("R001",data);
+        return new ResponseEntity<>(set,HttpStatus.OK);
+
     }
 
-    @GetMapping(value = "/reservations" ,params = {"name", "phonenumber"})
-    public List<Reservation> getReservationDetails(@RequestParam("name") String name ,
-                       @RequestParam("phonenumber" ) String phonenumber){
-     return reservationRepository.findByNameAndPhoneNumber(name, phonenumber);
-    }
+    @Parameter(name="name" ,description = "사용자 이름")
+    @Parameter(name = "phoneNumber", description = "ex) xxx-xxxx-xxxx의 형태")
+    @GetMapping(value = "/reservations" ,params = {"name", "phoneNumber"})
+    public ResponseEntity<ServiceResponse> getReservationDetails(@RequestParam("name") String name ,
+                                                                 @RequestParam("phoneNumber" ) String phoneNumber){
+        List<Reservation> details = reservationService.getReservationDetails(name,phoneNumber);
+        if (!details.isEmpty()){
+            ServiceResponse success = new ServiceResponse("R001", details);
+            return new ResponseEntity<>(success,HttpStatus.OK);
+        }
+        else{
+            ServiceResponse fail = new ServiceResponse("E001",details);
+            return new ResponseEntity<>(fail,HttpStatus.BAD_REQUEST);
+        }
 
+    }
+//
+    @Operation(summary = " 예약 정보 저장 api " )
     @PostMapping("/reservations")
-    public String PostReservations(@RequestBody ReservationForm dto){
-        log.info("dto :"+ dto);
-        Reservation dto_entity = dto.toEntity();
-        log.info("entity: "+dto_entity);
-        Reservation saved = reservationRepository.save(dto_entity);
-        log.info("savedata : " + saved);
-        return "ok";
+    public ResponseEntity<ServiceResponse> postReservations(@RequestBody ReservationForm dto){
+        Reservation saved = reservationService.postReservation(dto);
+        return new ResponseEntity<>(new ServiceResponse("R001",saved),HttpStatus.CREATED);
     }
+    @Operation(summary = "status 변경 api" )
     @PostMapping("/reservations/{id}")
-    public String UpdateReservations(@PathVariable Long id,
-                                     @RequestBody StatusForm dto){
-        Reservation reservationEntity = reservationRepository.findById(id).orElse(null);
-        log.info("dto : "  + dto.toString());
-        log.info("reservationEntity " + reservationEntity);
-        reservationEntity.setStatus(dto.getStatus());
-        reservationRepository.save(reservationEntity);
-        return "ok";
+    public ResponseEntity<ServiceResponse> updateReservations(
+                                                              @PathVariable Long id,
+                                                              @RequestBody StatusForm dto){
+        Reservation saved = reservationService.updateReservation(id,dto);
+        ServiceResponse success = new ServiceResponse("R001",saved);
+        return new ResponseEntity<>(success,HttpStatus.CREATED);
     }
 
-//    @PostMapping("/test")
-//    public String test(@)
 
 
 }
