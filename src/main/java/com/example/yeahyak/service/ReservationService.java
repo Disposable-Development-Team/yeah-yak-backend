@@ -17,11 +17,11 @@ public class ReservationService {
 
     public List<Reservation> getReservationAll(){
 
-        return reservationRepository.findAll();
+        return reservationRepository.findAllByOrderByCreatedDateDesc();
     }
     public List<Reservation> getReservationDetails(String name, String phoneNumber){
 
-        return reservationRepository.findByNameAndPhoneNumber(name, phoneNumber);
+        return reservationRepository.findByNameAndPhoneNumberOrderByCreatedDateDesc(name, phoneNumber);
     }
     public Reservation postReservation(ReservationForm dto){
         Reservation reservation = dto.toEntity();

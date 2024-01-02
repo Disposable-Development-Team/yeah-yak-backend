@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface ReservationRepository extends CrudRepository<Reservation,Long> {
     @Override
     Optional<Reservation> findById(Long id);
-    ArrayList<Reservation> findAll();
+    ArrayList<Reservation> findAllByOrderByCreatedDateDesc();
 
-    List<Reservation> findByNameAndPhoneNumber(String name, String phoneNumber);
+    List<Reservation> findByNameAndPhoneNumberOrderByCreatedDateDesc(String name, String phoneNumber);
 }
