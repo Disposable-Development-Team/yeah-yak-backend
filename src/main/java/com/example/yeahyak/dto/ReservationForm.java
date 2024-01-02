@@ -4,17 +4,14 @@ import com.example.yeahyak.entity.Reservation;
 import com.example.yeahyak.entity.Status;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-
+import lombok.*;
 
 
 import java.time.LocalDate;
 
 
 @Setter
+@Getter
 @NoArgsConstructor  // 중요!
 @AllArgsConstructor
 @ToString
@@ -46,4 +43,7 @@ public class ReservationForm {
         return new Reservation(id,name,room,phoneNumber,startDate,endDate,status);
     }
 
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
 }

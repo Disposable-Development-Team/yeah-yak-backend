@@ -5,9 +5,10 @@ import com.example.yeahyak.dto.ReservationForm;
 import com.example.yeahyak.dto.StatusForm;
 import com.example.yeahyak.dto.ServiceResponse;
 import com.example.yeahyak.entity.Reservation;
-import com.example.yeahyak.repository.ReservationRepository;
 
 
+
+import com.example.yeahyak.service.EmailService;
 import com.example.yeahyak.service.ReservationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -32,6 +33,8 @@ public class ReserveApiController {
     @Autowired
     private ReservationService reservationService;
     private ServiceResponse success;
+    @Autowired
+    private EmailService emailService;
 
     @Operation(summary = "예약 정보 전체 불러오기 api " )
     @GetMapping("/reservations")
@@ -62,20 +65,27 @@ public class ReserveApiController {
 //
     @Operation(summary = " 예약 정보 저장 api " )
     @PostMapping("/reservations")
-    public ResponseEntity<ServiceResponse> postReservations(@RequestBody ReservationForm dto){
-        Reservation saved = reservationService.postReservation(dto);
-        return new ResponseEntity<>(new ServiceResponse("R001",saved),HttpStatus.CREATED);
+    public ResponseEntity<ServiceResponse> postReservations(@RequestBody ReservationForm dto) throws Exception{
+//        Reservation saved = reservationService.postReservation(dto);
+        emailService.sendReservationEmail(dto);
+        return new ResponseEntity<>(new ServiceResponse("R001","abc"),HttpStatus.CREATED);
     }
     @Operation(summary = "status 변경 api" )
     @PostMapping("/reservations/{id}")
-    public ResponseEntity<ServiceResponse> updateReservations(
-                                                              @PathVariable Long id,
-                                                              @RequestBody StatusForm dto){
+    public ResponseEntity<ServiceResponse> updateReservations(@PathVariable("id") Long id,
+                                   @RequestBody StatusForm dto){
         Reservation saved = reservationService.updateReservation(id,dto);
         ServiceResponse success = new ServiceResponse("R001",saved);
+        Long status = dto.getStatus().getStatus();
+        if (status == 5){
+            emailService.sendCancellationEmail(dto);
+        }
         return new ResponseEntity<>(success,HttpStatus.CREATED);
     }
-
-
+//    @PostMapping("/testMail")
+//    public void mail(@RequestBody StatusForm dto){
+//
+//        System.out.println(dto.getStatus().getStatus().getClass());
+//    }
 
 }

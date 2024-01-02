@@ -15,5 +15,8 @@ public class StatusForm {
     private void unpackNested(Long id){
         this.status = new Status(); // 객체 생성
         status.setStatus(id);
+
     }
+
+
 }
