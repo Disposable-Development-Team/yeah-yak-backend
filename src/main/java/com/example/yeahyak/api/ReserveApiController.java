@@ -80,7 +80,7 @@ public class ReserveApiController {
         System.out.println(saved);
         ServiceResponse success = new ServiceResponse("R001",saved);
         Long status = dto.getStatus().getStatus();
-        if (status == 5){
+        if (status == 3){
             emailService.sendCancellationEmail(saved);
         }
         return new ResponseEntity<>(success,HttpStatus.CREATED);
