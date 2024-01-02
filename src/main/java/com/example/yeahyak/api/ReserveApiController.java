@@ -65,20 +65,23 @@ public class ReserveApiController {
 //
     @Operation(summary = " 예약 정보 저장 api " )
     @PostMapping("/reservations")
-    public ResponseEntity<ServiceResponse> postReservations(@RequestBody ReservationForm dto) throws Exception{
-//        Reservation saved = reservationService.postReservation(dto);
+    public ResponseEntity<ServiceResponse> postReservations(
+                                        @RequestBody ReservationForm dto) throws Exception{
+        Reservation saved = reservationService.postReservation(dto);
         emailService.sendReservationEmail(dto);
-        return new ResponseEntity<>(new ServiceResponse("R001","abc"),HttpStatus.CREATED);
+        return new ResponseEntity<>(new ServiceResponse("R001",saved),HttpStatus.CREATED);
     }
     @Operation(summary = "status 변경 api" )
     @PostMapping("/reservations/{id}")
-    public ResponseEntity<ServiceResponse> updateReservations(@PathVariable("id") Long id,
-                                   @RequestBody StatusForm dto){
+    public ResponseEntity<ServiceResponse> updateReservations(
+                                   @PathVariable("id") Long id,
+                                   @RequestBody StatusForm dto) throws Exception{
         Reservation saved = reservationService.updateReservation(id,dto);
+        System.out.println(saved);
         ServiceResponse success = new ServiceResponse("R001",saved);
         Long status = dto.getStatus().getStatus();
         if (status == 5){
-            emailService.sendCancellationEmail(dto);
+            emailService.sendCancellationEmail(saved);
         }
         return new ResponseEntity<>(success,HttpStatus.CREATED);
     }
