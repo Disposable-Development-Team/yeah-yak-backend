@@ -1,29 +1,46 @@
 package com.example.yeahyak.entity;
 
+
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
+
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
-@AllArgsConstructor
 @ToString
+@AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Setter
 
-public class Reservation {
+@Table(name = "reservation")
+public class Reservation extends BaseTimeEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // 자동생성 전략
     private Long id;
+
     @Column
     private String name;
+
     @Column
-    private String location;
+    private String room;
+
     @Column
-    private String startdate;
+    private String phoneNumber;
+
     @Column
-    private String enddate;
+    private LocalDate startDate;
+
     @Column
-    private String status;
+    private LocalDate endDate;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "status")
+    private Status status;
+
+
+
 }
