@@ -85,6 +85,17 @@ public class ReserveApiController {
         }
         return new ResponseEntity<>(success,HttpStatus.CREATED);
     }
+    @Operation(summary = "예약 정보 삭제 api")
+    @DeleteMapping("/reservations/{id}")
+    public ResponseEntity<ServiceResponse> deleteReservation(@PathVariable("id") Long id) {
+        boolean deleted = reservationService.deleteReservation(id);
+        if (deleted) {
+            return new ResponseEntity<>(new ServiceResponse("R001", "Reservation deleted successfully"), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(new ServiceResponse("E002", "Reservation not found"), HttpStatus.NOT_FOUND);
+        }
+    }
+
 //    @PostMapping("/testMail")
 //    public void mail(@RequestBody StatusForm dto){
 //

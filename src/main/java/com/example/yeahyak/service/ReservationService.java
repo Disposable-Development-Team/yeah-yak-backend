@@ -32,5 +32,13 @@ public class ReservationService {
         reservationEntity.setStatus(dto.getStatus());
         return reservationRepository.save(reservationEntity);
     }
+    public boolean deleteReservation(Long id) {
+        Optional<Reservation> reservation = reservationRepository.findById(id);
+        if (reservation.isPresent()) {
+            reservationRepository.deleteById(id);
+            return true;
+        }
+        return false;
+    }
 
 }

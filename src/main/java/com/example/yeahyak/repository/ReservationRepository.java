@@ -13,4 +13,6 @@ public interface ReservationRepository extends CrudRepository<Reservation,Long> 
     ArrayList<Reservation> findAllByOrderByCreatedDateDesc();
 
     List<Reservation> findByNameAndPhoneNumberOrderByCreatedDateDesc(String name, String phoneNumber);
+    @Override
+    void deleteById(Long id);
 }
